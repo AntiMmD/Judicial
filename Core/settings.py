@@ -37,8 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user',
-    'job',
+    
+    # apps
+    'user.apps.UserConfig',
+    'job.apps.JobConfig',
+    'quiz.apps.QuizConfig',
+
+    # extentions
     "drf_spectacular",
     "drf_spectacular_sidecar",
 ]
