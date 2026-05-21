@@ -1,0 +1,301 @@
+{% extends 'docs/base.html' %} {% load static %} {% block title %}Jobs API -
+GoooyaMelk API Documentation{% endblock %} {% block content %}
+
+<div class="“my-5”">
+  <h1 class="“h3”">Jobs API</h1>
+
+  <p>مستندات API مربوط به مدیریت شغل‌ها (Job)</p>
+
+  <hr class="“my-5”" />
+</div>
+
+<h5 id="“overview”" class="“pt-5”">معرفی</h5>
+
+<p>
+  این API برای مدیریت لیست شغل‌ها در سیستم استفاده می‌شود. هر کاربر می‌تواند یک
+  شغل داشته باشد که از جدول Job انتخاب می‌شود.
+</p>
+
+<p>
+  تمام endpointهای این اپ با پیشوند
+
+  <code>/jobs/</code>
+
+  در دسترس هستند.
+</p>
+
+
+<div class="“alert" alert-warning”>
+  <strong>دسترسی:</strong>
+
+  تمام endpointهای این بخش فقط برای
+
+  <code>Admin</code>
+
+  در دسترس هستند.
+  
+</div>
+<br>
+<h5 id="“endpoints”" class="“pt-5”">لیست Endpointها</h5>
+
+<ul>
+  <li><a href="“#job-list”">GET /jobs/</a> - دریافت لیست شغل‌ها</li>
+
+  <li><a href="“#create-job”">POST /jobs/</a> - ایجاد شغل جدید</li>
+
+  <li><a href="“#job-detail”">GET /jobs/{id}/</a> - دریافت یک شغل</li>
+
+  <li><a href="“#update-job”">PUT /jobs/{id}/</a> - ویرایش کامل شغل</li>
+
+  <li><a href="“#patch-job”">PATCH /jobs/{id}/</a> - ویرایش بخشی از شغل</li>
+</ul>
+
+<hr class="“my-5”" />
+
+<h5 id="“job-list”" class="“pt-5”">1. دریافت لیست شغل‌ها</h5>
+
+<p>لیست تمام شغل‌های ثبت‌شده در سیستم.</p>
+
+<h6>Endpoint</h6>
+
+<pre><code class=“language-http”>
+
+GET /jobs/
+
+</code></pre>
+
+<h6>نمونه پاسخ</h6>
+
+<pre><code class=“language-json”>
+
+[
+
+{
+
+“id”: 1,
+
+“occupation”: “Engineer”,
+
+“description”: “Software engineer”,
+
+“is_active”: true
+
+},
+
+{
+
+“id”: 2,
+
+“occupation”: “Teacher”,
+
+“description”: “School teacher”,
+
+“is_active”: true
+
+}
+
+]
+
+</code></pre>
+
+<hr />
+
+<h5 id="“create-job”" class="“pt-5”">2. ایجاد شغل</h5>
+
+<p>ایجاد یک شغل جدید در سیستم.</p>
+
+<div class="“alert" alert-warning”><strong>دسترسی:</strong> Admin</div>
+
+<h6>Endpoint</h6>
+
+<pre><code class=“language-http”>
+
+POST /jobs/
+
+</code></pre>
+
+<h6>نمونه درخواست</h6>
+
+<pre><code class=“language-json”>
+
+{
+
+“occupation”: “Engineer”,
+
+“description”: “Software engineer”,
+
+“is_active”: true
+
+}
+
+</code></pre>
+
+<h6>نمونه پاسخ</h6>
+
+<pre><code class=“language-json”>
+
+{
+
+“id”: 3,
+
+“occupation”: “Engineer”,
+
+“description”: “Software engineer”,
+
+“is_active”: true
+
+}
+
+</code></pre>
+
+<hr />
+
+<h5 id="“job-detail”" class="“pt-5”">3. دریافت یک شغل</h5>
+
+<p>دریافت اطلاعات یک شغل بر اساس شناسه.</p>
+
+<h6>Endpoint</h6>
+
+<pre><code class=“language-http”>
+
+GET /jobs/{id}/
+
+</code></pre>
+
+<h6>نمونه پاسخ</h6>
+
+<pre><code class=“language-json”>
+
+{
+
+“id”: 1,
+
+“occupation”: “Engineer”,
+
+“description”: “Software engineer”,
+
+“is_active”: true
+
+}
+
+</code></pre>
+
+<hr />
+
+<h5 id="“update-job”" class="“pt-5”">4. ویرایش کامل شغل</h5>
+
+<h6>Endpoint</h6>
+
+<pre><code class=“language-http”>
+
+PUT /jobs/{id}/
+
+</code></pre>
+
+<h6>نمونه درخواست</h6>
+
+<pre><code class=“language-json”>
+
+{
+
+“occupation”: “Senior Engineer”,
+
+“description”: “Senior software engineer”,
+
+“is_active”: true
+
+}
+
+</code></pre>
+
+<hr />
+
+<h5 id="“patch-job”" class="“pt-5”">5. ویرایش جزئی شغل</h5>
+
+<h6>Endpoint</h6>
+
+<pre><code class=“language-http”>
+
+PATCH /jobs/{id}/
+
+</code></pre>
+
+<h6>نمونه درخواست</h6>
+
+<pre><code class=“language-json”>
+
+{
+
+“is_active”: false
+
+}
+
+</code></pre>
+
+<hr />
+
+<h5 id="“permissions”" class="“pt-5”">6. دسترسی‌ها</h5>
+
+<div class="“table-responsive”">
+  <table class="“table" table-bordered”>
+    <thead>
+      <tr>
+        <th>Endpoint</th>
+
+        <th>Permission</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>GET /jobs/</td>
+
+        <td>IsAdminUser</td>
+      </tr>
+
+      <tr>
+        <td>POST /jobs/</td>
+
+        <td>IsAdminUser</td>
+      </tr>
+
+      <tr>
+        <td>GET /jobs/{id}</td>
+
+        <td>IsAdminUser</td>
+      </tr>
+
+      <tr>
+        <td>PUT /jobs/{id}</td>
+
+        <td>IsAdminUser</td>
+      </tr>
+
+      <tr>
+        <td>PATCH /jobs/{id}</td>
+
+        <td>IsAdminUser</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h5 id="“url-map”" class="“pt-5”">7. ساختار آدرس‌ها</h5>
+
+<p>در فایل اصلی پروژه:</p>
+
+<pre><code class=“language-python”>
+
+path(‘jobs/’, include(‘job.urls’))
+
+</code></pre>
+
+<p>
+  بنابراین تمام endpointها با پیشوند
+
+  <code>/jobs/</code>
+
+  در دسترس هستند.
+</p>
+
+{% endblock %}

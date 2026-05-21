@@ -12,7 +12,7 @@ from Accounts.api.serializers import (
     MessageSerializer
 )
 from Accounts.services import internal_services, external_services
-from Accounts.api.pagination import PageNumberPagination, UserPagination
+from Accounts.api.pagination import UserPagination
 
 User = get_user_model()
 
