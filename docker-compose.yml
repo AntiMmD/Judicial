@@ -1,0 +1,41 @@
+services:
+  django:
+    build:
+      context: .
+    ports:
+      - "7070:7070"
+    volumes:
+      - .:/Judicial
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:7070"
+    environment:
+    
+      DB_ENGINE: django.db.backends.postgresql
+      DB_HOST: postgres
+      DB_NAME: devdb
+      DB_USER: devuser
+      DB_PASSWORD: changeme
+      DB_PORT: 5432
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:17
+    volumes:
+      - dev-postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: devdb
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: changeme
+    ports:
+      - '5430:5432'
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  dev-postgres-data:
