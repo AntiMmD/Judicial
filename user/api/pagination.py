@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.pagination import PageNumberPagination
 User = get_user_model()
-
+from rest_framework import serializers
 
 
 class UserPagination(PageNumberPagination):
@@ -22,8 +22,8 @@ class UserSerializerForAdmins(serializers.ModelSerializer):
             'first_name',
             'last_name', 
             'role',
-            'national_code',
-            'birthday_date',
+            # 'national_code',
+            # 'birthday_date',
             'is_active',
             'is_staff',
         ]

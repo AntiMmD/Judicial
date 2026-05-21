@@ -5,12 +5,17 @@ from django.contrib.auth import get_user_model
 
 class UserAdmin(BaseUserAdmin):
     ordering = ['id']
-    list_display = ['phonenumber','email', 'name', 'surname']
+    list_display = [
+        'phonenumber',
+        'first_name',
+        'last_name'
+        ]
+
     fieldsets = (
         (
             None,
             {
-                'fields': ('phonenumber','email', 'name', 'surname')
+                'fields': ('phonenumber','email', 'first_name', 'surname')
             }
         ),
         (
@@ -34,10 +39,11 @@ class UserAdmin(BaseUserAdmin):
             None,{
                 'classes':('wide',),
                 'fields':(
+                    'phonenumber',
                     'email',
                     'password1',
                     'password2',
-                    'name',
+                    'first_name',
                     'is_active',
                     'is_staff',
                     'is_superuser',

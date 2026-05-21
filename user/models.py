@@ -46,8 +46,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True
     )
 
-    phonenumber = models.CharField(max_length= 15, unique=True)
-    email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
+    phonenumber = models.CharField(max_length= 15, unique=True,verbose_name='شماره همراه')
+    email = models.EmailField(max_length=255, unique=True, null=True, blank=True , verbose_name='ایمیل')
     job = models.ForeignKey(
         Job,
         on_delete=models.SET_NULL,
@@ -55,12 +55,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         related_name="users"
     )
 
-    first_name = models.CharField(max_length=150, blank=True)
-    last_name  = models.CharField(max_length=150, blank=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    first_name = models.CharField(max_length=150, blank=True , verbose_name='نام')
+    last_name  = models.CharField(max_length=150, blank=True , verbose_name='نام خانوادگی')
+    is_active = models.BooleanField(default=True , verbose_name='فعال')
+    is_staff = models.BooleanField(default=False , verbose_name='کارمند')
+    created_at = models.DateTimeField(auto_now_add=True , verbose_name='ساخته شده در')
+    updated_at = models.DateTimeField(auto_now=True , verbose_name='به روز رسانی شده در')
     
     USERNAME_FIELD = 'phonenumber'
 
@@ -86,3 +86,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 self.email = None
 
         super().save(*args, **kwargs)
+    
+    class Meta:
+        verbose_name='کاربر'
+        verbose_name_plural ='کاربران'

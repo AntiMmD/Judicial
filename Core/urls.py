@@ -9,5 +9,6 @@ urlpatterns = [
     path('api/docs/',SpectacularSwaggerView.as_view(url_name='api_schema'), name='api_docs'),
     path('api/auth/', include('user.urls')),
     path('api/jobs/', include('job.urls')),
+    path("api/quiz/", include("quiz.urls")),
 ]
 

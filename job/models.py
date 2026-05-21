@@ -19,3 +19,4 @@ class Job(models.Model):
                 self.occupation = None
 
         super().save(*args, **kwargs)
+    

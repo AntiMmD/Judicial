@@ -1,13 +1,14 @@
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser , AllowAny
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiExample
 from django.contrib.auth import get_user_model
 
 from user.api.serializers import UserSerializer, RequestOTPSerializer, VerifyOTPSerializer
 from user.services import internal_services, external_services
-from user.api.pagination import 
+from user.api.pagination import *
 User = get_user_model()
+
 
 @extend_schema(
     examples=[
