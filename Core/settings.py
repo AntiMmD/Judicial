@@ -1,9 +1,5 @@
 from pathlib import Path
-<<<<<<< HEAD
 from decouple import config , Csv
-=======
-from decouple import config
->>>>>>> e50608e8b6819f99187957da6adfc3cdcb7249fe
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,25 +26,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD
     
     # apps
     'user.apps.UserConfig',
     'job.apps.JobConfig',
     'quiz.apps.QuizConfig',
+    'Documents.apps.DocumentsConfig',
 
     # extentions
     "drf_spectacular",
     "drf_spectacular_sidecar",
     'nested_admin',
 
-=======
-    'Accounts',
-    'job',
-    'drf_spectacular',
-    'drf_spectacular_sidecar',
-    'Documents',
->>>>>>> e50608e8b6819f99187957da6adfc3cdcb7249fe
 ]
 
 MIDDLEWARE = [
@@ -86,11 +75,7 @@ WSGI_APPLICATION = 'Core.wsgi.application'
 
 DATABASES = {
     'default': {
-<<<<<<< HEAD
         'ENGINE': config('DB_ENGINE'),
-=======
-        'ENGINE': 'django.db.backends.postgresql',
->>>>>>> e50608e8b6819f99187957da6adfc3cdcb7249fe
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
@@ -138,7 +123,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-AUTH_USER_MODEL = 'Accounts.User'
+AUTH_USER_MODEL = 'user.User'
 
 REST_FRAMEWORK={
     'DEFAULT_SCHEMA_CLASS':'drf_spectacular.openapi.AutoSchema',
