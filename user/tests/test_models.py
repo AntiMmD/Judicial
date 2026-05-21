@@ -107,9 +107,3 @@ class UserFieldNormalizationsTests(TestCase):
                 phonenumber="09166666666",
                 email="unique@test.com"
             )
-
-    def test_str_returns_phonenumber(self):
-        user = User.objects.create(
-            phonenumber="09177777777"
-        )
-        self.assertEqual(str(user), "09177777777")

@@ -1,185 +1,29 @@
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser , AllowAny
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiExample
 from django.contrib.auth import get_user_model
 
-from user.api.serializers import UserSerializer, RequestOTPSerializer, VerifyOTPSerializer
-from user.services import internal_services, external_services
-from user.api.pagination import *
+from Accounts.api.serializers import (
+    UserSerializer,
+    RequestOTPSerializer,
+    VerifyOTPSerializer,
+    TokenPairSerializer,
+    MessageSerializer
+)
+from Accounts.services import internal_services, external_services
+from Accounts.api.pagination import UserPagination
+
 User = get_user_model()
 
 
-@extend_schema(
-    examples=[
-        OpenApiExample(
-            "Valid inputs",
-            value={
-                "phonenumber": "+989123456789",
-                "password": "string",
-                "email": "user@example.com",
-                "name": "string",
-                "surname": "string",
-                "job": 0
-                }
-        )
-    ],
-)    
-class CreateUserView(generics.CreateAPIView):
-    serializer_class = UserSerializer
- 
-class ManageUserView(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = UserSerializer
-    
-    def get_object(self):
-        return self.request.user
-    
-@extend_schema(
-    examples=[
-        OpenApiExample(
-            "Valid phone number",
-            value={"phonenumber": "+989123456789"}
-        )
-    ],
-)    
-class RequestOTPView(generics.GenericAPIView):
-    serializer_class = RequestOTPSerializer
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
 
-        phonenumber = serializer.validated_data["phonenumber"]
-        otp = internal_services.generate_otp()
-        internal_services.save_otp(phonenumber, otp)
-        external_services.send_sms(phonenumber, otp)
-
-        return Response({"message": "OTP sent"}, status=status.HTTP_200_OK)
-
-@extend_schema(
-    examples=[
-        OpenApiExample(
-            "Valid phone number",
-            value={
-                "phonenumber": "+989123456789",
-                "otp":"123456"}
-        )
-    ],
-)  
-class VerifyOTPView(generics.GenericAPIView):
-    serializer_class = VerifyOTPSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        phonenumber = serializer.validated_data["phonenumber"]
-        otp = serializer.validated_data["otp"]
-
-        if not internal_services.verify_otp(phonenumber, otp):
-            return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
-
-        user, _ = get_user_model().objects.get_or_create(phonenumber=phonenumber)
-        tokens = internal_services.get_tokens_for_user(user)
-        return Response(tokens, status=status.HTTP_200_OK)
-
-
-
-# @extend_schema(
-#     request=UserSerializerForAdmins,
-#     responses={201: TokenPairSerializer},
-#     examples=[
-#         OpenApiExample(
-#             "Create user request",
-#             value={
-#                 "phonenumber": "09123456789",
-#                 "password": "strongpassword",
-#                 "first_name": "Ali",
-#                 "last_name": "Ahmadi",
-#                 "role": "admin",
-#                 "national_code": "1234567890",
-#                 "birthday_date": "1995-01-01",
-#                 "is_active": "true",
-#                 "is_staff":"true",
-#             },
-#             request_only=True,
-#         ),
-#         OpenApiExample(
-#             "Successful registration",
-#             value={
-#                 "refresh": "token...",
-#                 "access": "token..."
-#             },
-#             response_only=True,
-#             status_codes=["201"],
-#         ),
-#     ],
-# )
-# class CreateUserView(generics.GenericAPIView):
-#     permission_classes = [IsAdminUser]
-#     serializer_class = UserSerializerForAdmins
-
-#     def post(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-
-#         user = serializer.save()
-#         tokens = internal_services.get_tokens_for_user(user)
-#         return Response(tokens, status=status.HTTP_201_CREATED)
-
-# @extend_schema(
-#     responses={200: UserSerializer},
-# )
-# class ManageUserView(generics.RetrieveUpdateAPIView):
-#     permission_classes = [IsAuthenticated]
-#     serializer_class = UserSerializer
-
-#     def get_object(self):
-#         return self.request.user
-
-
-class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAdminUser]
+class UserCreateViewForUser(generics.CreateAPIView):
+    permission_classes = [AllowAny]
     queryset = User.objects.all()
-    serializer_class = UserSerializerForAdmins
-
-
-class UserListCreateView(generics.ListCreateAPIView):
-    permission_classes = [IsAdminUser]
-    queryset = User.objects.all().order_by("id")
     serializer_class = UserSerializer
     pagination_class = UserPagination
 
-    @extend_schema(
-        request=UserSerializerForAdmins,
-        responses={201: TokenPairSerializer},
-        examples=[
-            OpenApiExample(
-                "Create user request",
-                value={
-                    "phonenumber": "09123456789",
-                    "password": "strongpassword",
-                    "first_name": "Ali",
-                    "last_name": "Ahmadi",
-                    "role": "admin",
-                    "national_code": "1234567890",
-                    "birthday_date": "1995-01-01",
-                    "is_active": True,
-                    "is_staff": True,
-                },
-                request_only=True,
-            ),
-            OpenApiExample(
-                "Successful registration",
-                value={
-                    "refresh": "token...",
-                    "access": "token..."
-                },
-                response_only=True,
-                status_codes=["201"],
-            ),
-        ],
-    )
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -192,6 +36,14 @@ class UserListCreateView(generics.ListCreateAPIView):
         return Response(tokens, status=status.HTTP_201_CREATED)
 
 
+class UserDetailViewForUser(generics.RetrieveUpdateAPIView):
+    permission_classes = [AllowAny]
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+        
 @extend_schema(
     request=RequestOTPSerializer,
     responses={200: MessageSerializer},

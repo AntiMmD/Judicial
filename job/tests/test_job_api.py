@@ -8,8 +8,9 @@ from job.models import Job
 CREATE_JOB_URL = reverse("job:create")
 JOB_LIST_URL = reverse("job:list")
 
+User = get_user_model()
 def create_user(**params):
-    return get_user_model().objects.create_user(**params)
+    return User.objects.create_user(**params)
 
 def create_superuser(**params):
     user = create_user(**params)
@@ -20,7 +21,7 @@ def create_superuser(**params):
 
 def get_access_token(client, phone, password):
     response = client.post(
-        reverse("user:token_obtain_pair"),
+        reverse("user:login"),
         data={"phonenumber": phone, "password": password},
         format="json",
     )
@@ -38,13 +39,13 @@ class PrivateJobApiTests(TestCase):
         cls.adminPass = "adminpass123"
         cls.userPass = "testpass123"
         cls.admin = create_superuser(
-            phonenumber="09123456789", password= cls.adminPass , name="Admin"
+            phonenumber="09123456789", password= cls.adminPass , first_name="Admin"
         )
         cls.user = create_user(
             phonenumber="09101010101",
             password= cls.userPass,
-            name="Test Name",
-            surname="Test Surname",
+            first_name="Test Name",
+            last_name="Test Surname",
         )
         cls.job = Job.objects.create(
             occupation="Engineer", description="text", is_active=True

@@ -1,0 +1,22 @@
+# Git
+.git
+.gitignore
+
+# Docker
+
+
+#Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env/
+.venv/
+venv/
+.wsl-venv
+.coverage
+*.log
+
+# local db
+*.sqlite3
+

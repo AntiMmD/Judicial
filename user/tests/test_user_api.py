@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
-CREATE_USER_URL = reverse('user:create')
+CREATE_USER_URL = reverse('user:users-list')
 
 def create_user(**params):
     return get_user_model().objects.create_user(**params)
@@ -19,8 +19,8 @@ class PublicUserApiTests(TestCase):
         payload ={
             'phonenumber':'09101010101',
             'password':'testpass1234',
-            'name':'Test Name',
-            'surname': 'Test Surname'
+            'first_name':'Test Name',
+            'last_name': 'Test Surname'
         }
         response = self.client.post(CREATE_USER_URL, payload)
 
@@ -34,8 +34,8 @@ class PublicUserApiTests(TestCase):
         payload ={
             'phonenumber':'09101010101',
             'password':'testpass1234',
-            'name':'Test Name',
-            'surname': 'Test Surname',
+            'first_name':'Test Name',
+            'last_name': 'Test Surname',
         }
         create_user(**payload)
         response = self.client.post(CREATE_USER_URL, payload)
@@ -46,8 +46,8 @@ class PublicUserApiTests(TestCase):
         payload ={
             'phonenumber':'09101010101',
             'password':'p23',
-            'name':'Test Name',
-            'surname': 'Test Surname',            
+            'first_name':'Test Name',
+            'last_name': 'Test Surname',            
         }
         response = self.client.post(CREATE_USER_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -60,15 +60,15 @@ class PrivateUserApiTests(TestCase):
         self.payload ={
             'phonenumber':'09101010101',
             'password':'testpass123',
-            'name':'Test Name',
-            'surname': 'Test Surname'
+            'first_name':'Test Name',
+            'last_name': 'Test Surname'
         }
         create_user(**self.payload)
         self.client = APIClient()
 
         # Obtain JWT access token
         token_response = self.client.post(
-            reverse('user:token_obtain_pair'),
+            reverse('user:login'),
             data={'phonenumber': '09101010101', 'password': 'testpass123'},
             format='json'
         )
@@ -102,8 +102,8 @@ class PrivateUserApiTests(TestCase):
                 'phonenumber': '09101010101',
                 'password' : 'alteredPass123',
                 'email' : 'test@example.com',
-                'name': 'New Name',
-                'surname': 'New Surname'
+                'first_name': 'New Name',
+                'last_name': 'New Surname'
             },
             format = 'json'
             )
@@ -114,6 +114,6 @@ class PrivateUserApiTests(TestCase):
         self.assertEqual(user.phonenumber, '09101010101')
         self.assertTrue(user.check_password('alteredPass123'))
         self.assertEqual(user.email, 'test@example.com')
-        self.assertEqual(user.name, 'New Name')
-        self.assertEqual(user.surname, 'New Surname')
+        self.assertEqual(user.first_name, 'New Name')
+        self.assertEqual(user.last_name, 'New Surname')
 

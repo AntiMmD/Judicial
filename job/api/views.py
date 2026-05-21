@@ -25,7 +25,7 @@ class ManageJobView(generics.RetrieveUpdateAPIView):
     serializer_class = JobSerializer
     queryset = Job.objects.all()
 
-class DisplayJobListView(generics.ListAPIView):
+class DisplayJobListView(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = JobSerializer
     queryset = Job.objects.all()

@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <title>{% block title %}GoooyaMelk API Documentation{% endblock %}</title>
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="author" content="" />
+    <meta
+      name="description"
+      content="GoooyaMelk API Documentation - مستندات کامل API پروژه گویا ملک"
+    />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}" />
+
+    <!-- Plugins CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'assets/vendor/font-awesome/css/all.min.css' %}"
+    />
+
+    <!-- Theme CSS -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'assets/css/style.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'assets/css/doc.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'assets/css/prism.css' %}"
+    />
+
+    {% block extra_css %}{% endblock %}
+  </head>
+
+  <body>
+    <!-- **************** MAIN CONTENT START **************** -->
+    <main>
+      <!-- Navbar top START -->
+      <div class="navbar-top bg-dark px-3 px-sm-4 px-md-5">
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Logo START -->
+          <a class="navbar-brand pb-3" href="{% url 'documents:index' %}">
+            <img
+              class="navbar-brand-item h-30px"
+              src="{% static 'assets/images/logo.svg' %}"
+              alt="logo"
+              style="height: 55px !important"
+            />
+          </a>
+          <!-- Logo END -->
+
+          <!-- Navbar right -->
+          <div>
+            <ul class="text-start list-inline m-0">
+              <li class="list-inline-item me-2 me-md-4">
+                <a class="text-white" href="/api/schema/swagger-ui/"
+                  >Swagger UI</a
+                >
+              </li>
+              <li class="list-inline-item me-2 me-md-4">
+                <a class="text-white" href="/api/schema/redoc/">ReDoc</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Navbar top END -->
+
+      <div class="container-fluid px-0">
+        <div class="page-wrapper">
+          <!-- Left sidebar START -->
+          <nav class="navbar navbar-expand-sm navbar-light bg-light px-3">
+            <a class="navbar-brand py-2 d-sm-none" href="#">منو</a>
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#docNav"
+              aria-controls="docNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="docNav">
+              <div class="left-sidebar bg-light">
+                <div class="content custom-scrollbar h-100">
+                  <div class="list-group list-group-borderless p-3 p-md-4">
+                    <b class="text-dark text-uppercase mb-2">شروع</b>
+
+                    <a
+                      class="list-group-item"
+                      href="{% url 'documents:accounts' %}"
+                      >Accounts API</a
+                    >
+                    <a
+                      class="list-group-item"
+                      href="{% url 'documents:job' %}"
+                      >Jobs API</a>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nav>
+          <!-- Left sidebar END -->
+
+          <!-- Main content START -->
+          <div class="main-content">
+            <div class="row">
+              <div class="col-12">{% block content %}{% endblock %}</div>
+            </div>
+          </div>
+          <!-- Main content END -->
+        </div>
+      </div>
+    </main>
+
+    <!-- =======================
+JavaScripts -->
+
+    <!-- Bootstrap JS -->
+    <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+
+    <script src="{% static 'assets/js/simple-scrollbar.min.js' %}"></script>
+    <script src="{% static 'assets/js/prism.js' %}"></script>
+    <script src="{% static 'assets/js/clipboard.min.js' %}"></script>
+
+    <!-- Template Functions -->
+    <script src="{% static 'assets/js/functions.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

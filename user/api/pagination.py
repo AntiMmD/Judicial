@@ -58,3 +58,4 @@ class TokenPairSerializer(serializers.Serializer):
 
 class MessageSerializer(serializers.Serializer):
     message = serializers.CharField()
+    max_page_size = 100

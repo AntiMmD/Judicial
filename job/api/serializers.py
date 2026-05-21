@@ -5,4 +5,3 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = ['id','occupation', 'description', 'is_active']
-        extra_kwargs = {'id': {'read_only':True},}
