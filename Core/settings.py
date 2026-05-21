@@ -28,19 +28,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # apps
-    'user.apps.UserConfig',
+    'Accounts.apps.UserConfig',
     'job.apps.JobConfig',
     'quiz.apps.QuizConfig',
     'Documents.apps.DocumentsConfig',
+    'corsheaders',
 
     # extentions
-    "drf_spectacular",
-    "drf_spectacular_sidecar",
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
     'nested_admin',
 
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,6 +50,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# CORS configuration
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+CORS_ALLOW_HEADERS = [
+    "Content-Type",
+    "Authorization",
 ]
 
 ROOT_URLCONF = 'Core.urls'
@@ -118,12 +129,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = 'Accounts.User'
 
 REST_FRAMEWORK={
     'DEFAULT_SCHEMA_CLASS':'drf_spectacular.openapi.AutoSchema',

@@ -4,18 +4,17 @@ from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiExample
 from django.contrib.auth import get_user_model
 
-from user.api.serializers import (
+from Accounts.api.serializers import (
     UserSerializer,
     RequestOTPSerializer,
     VerifyOTPSerializer,
     TokenPairSerializer,
     MessageSerializer
 )
-from user.services import internal_services, external_services
-from user.api.pagination import UserPagination
+from Accounts.services import internal_services, external_services
+from Accounts.api.pagination import UserPagination
 
 User = get_user_model()
-
 
 
 class UserCreateViewForUser(generics.CreateAPIView):

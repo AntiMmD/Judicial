@@ -10,3 +10,5 @@ python-decouple
 django-ckeditor-5
 jdatetime
 coverage
+django-cors-headers
+django-nested-admin
