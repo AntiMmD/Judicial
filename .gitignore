@@ -1,2 +1,14 @@
-venv/
-.env
+.vscode
+/ViBlog
+db.sqlite3
+__pycache__
+src/static
+container.db.sqlite3
+.venv-wsl
+.vs/
+default_*
+.coverage
+AgahiHa
+**/sample_files/
+.wsl-venv/
+ShahrGpt/ShahrGpt.zip
