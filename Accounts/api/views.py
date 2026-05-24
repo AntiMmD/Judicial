@@ -36,7 +36,7 @@ class UserCreateViewForUser(generics.CreateAPIView):
 
 
 class UserDetailViewForUser(generics.RetrieveUpdateAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -73,8 +73,7 @@ class RequestOTPView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         phonenumber = serializer.validated_data["phonenumber"]
-        otp = internal_services.generate_otp()
-        internal_services.save_otp(phonenumber, otp)
+        otp = internal_services.generate_and_save_otp(phonenumber)
         external_services.send_sms(phonenumber, otp)
 
         return Response({"message": "OTP sent"}, status=status.HTTP_200_OK)

@@ -10,21 +10,19 @@ class OTPAPITests(APITestCase):
         self.phonenumber = "09123456789"
         self.otp = "123456"
 
-        self.request_url = reverse("user:request-otp")
-        self.verify_url = reverse("user:verify-otp")
+        self.request_url = reverse("Accounts:request-otp")
+        self.verify_url = reverse("Accounts:verify-otp")
 
-    @patch("user.services.external_services.send_sms")
-    @patch("user.services.internal_services.save_otp")
-    @patch("user.services.internal_services.generate_otp")
-    def test_request_otp_success(self, mock_generate, mock_save, mock_send_sms):
-        mock_generate.return_value = self.otp
+    @patch("Accounts.services.external_services.send_sms")
+    @patch("Accounts.services.internal_services.generate_and_save_otp")
+    def test_request_otp_success(self, mock_generate_and_save_otp, mock_send_sms):
+        mock_generate_and_save_otp.return_value = self.otp
 
         res = self.client.post(self.request_url, {"phonenumber": self.phonenumber}, format="json")
 
         self.assertEqual(res.status_code, 200)
 
-        mock_generate.assert_called_once()
-        mock_save.assert_called_once_with(self.phonenumber, self.otp)
+        mock_generate_and_save_otp.assert_called_once_with(self.phonenumber)
         mock_send_sms.assert_called_once_with(self.phonenumber, self.otp)
 
         self.assertEqual(res.data, {"message": "OTP sent"})
@@ -33,7 +31,7 @@ class OTPAPITests(APITestCase):
         res = self.client.post(self.request_url, {}, format="json")
         self.assertEqual(res.status_code, 400)
 
-    @patch("user.services.internal_services.verify_otp")
+    @patch("Accounts.services.internal_services.verify_otp")
     def test_verify_otp_success_returns_tokens(self, mock_verify):
         mock_verify.return_value = True
 
