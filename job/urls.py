@@ -6,5 +6,5 @@ app_name = 'job'
 
 urlpatterns = [
     path('<int:pk>/', job.api.views.ManageJobView.as_view(), name='manage-job'),
-    path('', job.api.views.DisplayJobListView.as_view(), name='job-list'),    
+    path('', job.api.views.JobListView.as_view(), name='job-list'),    
 ]

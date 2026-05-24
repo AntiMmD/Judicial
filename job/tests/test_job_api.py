@@ -5,10 +5,11 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from job.models import Job
 
-CREATE_JOB_URL = reverse("job:create")
-JOB_LIST_URL = reverse("job:list")
+JOB_LIST_URL = reverse('job:job-list')
 
 User = get_user_model()
+
+
 def create_user(**params):
     return User.objects.create_user(**params)
 
@@ -19,13 +20,10 @@ def create_superuser(**params):
     user.save()
     return user
 
-def get_access_token(client, phone, password):
-    response = client.post(
-        reverse("user:login"),
-        data={"phonenumber": phone, "password": password},
-        format="json",
-    )
-    return response.data["access"]
+def get_access_token(user):
+    from rest_framework_simplejwt.tokens import RefreshToken
+    refresh = RefreshToken.for_user(user)
+    return str(refresh.access_token)
 
 
 
@@ -57,27 +55,27 @@ class PrivateJobApiTests(TestCase):
             "is_active": True,
         }
 
-        cls.MANAGE_JOB_URL = reverse("job:job", args=[cls.job.id])
+        cls.MANAGE_JOB_URL = reverse('job:manage-job', args=[cls.job.id])
 
     def setUp(self):
         self.client = APIClient()
 
-    def login(self, phone, password):
-        access = get_access_token(self.client, phone, password)
+    def login(self, user):
+        access = get_access_token(user)
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access}")
 
     def test_unauthenticated_user_cannot_create_job(self):
-        response = self.client.post(CREATE_JOB_URL, data= self.job_data, format="json")
+        response = self.client.post(JOB_LIST_URL, data= self.job_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_cannot_create_job(self):
-        self.login(self.user.phonenumber , self.userPass)
-        response = self.client.post(CREATE_JOB_URL, data= self.job_data, format="json")
+        self.login(self.user)
+        response = self.client.post(JOB_LIST_URL, data= self.job_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_only_admin_can_create_job(self):
-        self.login(self.admin.phonenumber , self.adminPass)
-        response = self.client.post(CREATE_JOB_URL, data= self.job_data, format='json')
+        self.login(self.admin)
+        response = self.client.post(JOB_LIST_URL, data= self.job_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_unauthenticated_user_cannot_manage_job(self):
@@ -91,7 +89,7 @@ class PrivateJobApiTests(TestCase):
         )
 
     def test_authenticated_user_cannot_manage_job(self):
-        self.login(self.user.phonenumber , self.userPass)
+        self.login(self.user)
         self.assertEqual(
             self.client.get(self.MANAGE_JOB_URL).status_code,
             status.HTTP_403_FORBIDDEN,
@@ -102,7 +100,7 @@ class PrivateJobApiTests(TestCase):
         )
 
     def test_only_admin_can_manage_job(self):
-        self.login(self.admin.phonenumber , self.adminPass)
+        self.login(self.admin)
 
         update_data = {
             "occupation": "mechanic",
@@ -120,12 +118,12 @@ class PrivateJobApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_cannot_view_job_list(self):
-        self.login(self.user.phonenumber, self.userPass)
+        self.login(self.user)
         response = self.client.get(JOB_LIST_URL)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admin_can_view_job_list(self):
-        self.login(self.admin.phonenumber, self.adminPass)
+        self.login(self.admin)
 
         Job.objects.create(occupation="Teacher", description="text", is_active=True)
         Job.objects.create(occupation="Nurse", description="text", is_active=True)
