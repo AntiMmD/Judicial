@@ -32,12 +32,13 @@ INSTALLED_APPS = [
     'job.apps.JobConfig',
     'quiz.apps.QuizConfig',
     'Documents.apps.DocumentsConfig',
-    'corsheaders',
+    'Laws',
 
     # extentions
     'drf_spectacular',
     'drf_spectacular_sidecar',
     'nested_admin',
+    'corsheaders',
 
 ]
 
