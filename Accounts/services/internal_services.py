@@ -1,8 +1,13 @@
 import secrets
 import redis
+
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from Accounts.services.exceptions import RateLimitExceeded
+from Accounts.exceptions import (
+    RateLimitExceeded,
+    InvalidOTPError,
+
+)
 
 redis_client = redis.Redis(
     host='redis',
@@ -23,8 +28,7 @@ def _check_rate_limit(phonenumber, limit=1, window=120):
     count = redis_client.get(key)
     
     if count and int(count) >= limit:
-        return False  # Rate limit exceeded
-    
+        raise RateLimitExceeded
     
     pipeline = redis_client.pipeline()
     pipeline.incr(key)
@@ -36,9 +40,9 @@ def _check_rate_limit(phonenumber, limit=1, window=120):
 
 def _save_otp(phonenumber, otp):
     redis_client.setex(
-        f"otp:{phonenumber}",
-        120,
-        otp
+        name=f"otp:{phonenumber}",
+        time=120,
+        value=otp
     )
 
 
@@ -55,17 +59,35 @@ def generate_and_save_otp(phonenumber):
     return otp
 
 
-def verify_otp(phonenumber, otp):
-    saved = redis_client.get(f"otp:{phonenumber}")
+def _check_retry_attempts(phonenumber, allowed_retry_attempts):
+    retry_key = f"retry_attempts:otp:{phonenumber}"
+
+    raw_val = redis_client.get(retry_key)
+    if not raw_val:
+        redis_client.setex(name=retry_key,time=120, value='1')
+        return retry_key
+    
+    retry_attempts = int(raw_val)
+    if not retry_attempts or retry_attempts < allowed_retry_attempts:
+        redis_client.incr(retry_key)
+        return retry_key
+    
+    raise RateLimitExceeded()
+    
+
+def verify_otp(phonenumber, otp:str, allowed_retry_attempts: int= 3):
+    retry_key= _check_retry_attempts(phonenumber, allowed_retry_attempts)
+    saved= redis_client.get(f"otp:{phonenumber}")
 
     if saved is None:
-        return False
+        raise InvalidOTPError()
 
     if saved == otp:
         redis_client.delete(f"otp:{phonenumber}")
+        redis_client.delete(retry_key)
         return True
 
-    return False
+    raise InvalidOTPError()
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
