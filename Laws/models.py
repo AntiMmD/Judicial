@@ -40,6 +40,8 @@ class Law(models.Model):
     _ 5.9 yani tabsare 9 made 5
     """
     code = models.CharField(max_length=700, blank=True, null=True)
+    article_no = models.IntegerField(null=True, blank=True) # az fielde code be dast miad
+    note_no = models.IntegerField(null=True, blank=True) # az fielde code be dast miad
     priority = models.IntegerField(blank=True, null=True)
 
     class Category(models.TextChoices):
