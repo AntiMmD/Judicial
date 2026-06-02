@@ -1,4 +1,10 @@
-from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiResponse,
+    OpenApiExample,
+    OpenApiParameter,
+    OpenApiTypes,
+)
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
@@ -58,6 +64,22 @@ class CategoriesListView(APIView):
 # Law here means type="Law"
 class GetLawView(APIView):
     @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="page",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Page number for paginated children.",
+            ),
+            OpenApiParameter(
+                name="page_size",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Number of children to return per page. Default= 25",
+            ),
+        ],
         responses={
             200: LawDetailWithChildrenSerializer ,
             400: OpenApiResponse(description="Object exists but is not of type Law."),
@@ -96,6 +118,22 @@ class GetLawView(APIView):
 
 class GetArticleView(APIView):
     @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="page",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Page number for paginated notes.",
+            ),
+            OpenApiParameter(
+                name="page_size",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description="Number of notes to return per page. Default= 25",
+            ),
+        ],
         responses={
             200: ArticleDetailWithNotesSerializer,
             400: OpenApiResponse(description="Object exists but is not of type Article."),
