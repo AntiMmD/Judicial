@@ -1,5 +1,11 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.utils.text import slugify
+
+from bson import ObjectId
+
+def generate_objectid():
+    return str(ObjectId())
 
 
 class Law(models.Model):
@@ -8,7 +14,18 @@ class Law(models.Model):
         article = 'Article', 'ماده'
         note = 'Note', 'تبصره'
 
-    id = models.CharField(primary_key=True, max_length=100)
+    id = models.CharField(
+        primary_key=True,
+        max_length=100,
+        editable=False,
+        default=generate_objectid,)
+    
+    slug = models.SlugField(
+        max_length=255,
+        null=True,
+        blank=True,
+        allow_unicode=True,
+    )
     parent = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
@@ -132,8 +149,19 @@ class Law(models.Model):
         return f"{self.type}: {self.title[:30] if self.title else self.id}"
     
     def save(self, *args, **kwargs):
+        # auto-generate slug if missing
+        if not self.slug:
+            title_slug = slugify(self.title[:50] or "", allow_unicode=True).strip("-")
+            suffix = self.id
+            if title_slug:
+                self.slug = f"{title_slug}"
+            else:
+                self.slug = None
+
         self.full_clean()
         super().save(*args, **kwargs)
+
+
 
 class LawRelationship(models.Model):
     # Who is pointing?
