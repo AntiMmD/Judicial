@@ -55,6 +55,11 @@ class GetLawTests(APITestCase):
 
         cls.url = reverse('id-law-detail',args=[cls.law.pk])
     
+    def test_get_law_detail_returns_400_if_id_is_not_law(self):
+        url = reverse('id-law-detail',args=[self.article1.pk])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_law_detail_success(self):
         """Test that we can fetch a law and its children."""
@@ -66,7 +71,8 @@ class GetLawTests(APITestCase):
         self.assertEqual(response.data['title'], "Main Law")
         
         # Check that children exist
-        self.assertTrue(len(response.data['children']) > 0)
+        self.assertEqual(len(response.data['children']), 4)
+
     
     def test_get_law_detail_ordering_is_correct(self):
         response = self.client.get(self.url)
@@ -93,7 +99,7 @@ class GetLawTests(APITestCase):
 
     def test_get_law_with_slug_seo(self):
         """Test that the URL works with the SEO slug included."""
-        url_with_slug = reverse('slug-get-law', args=[self.law.slug, self.law.pk ])
+        url_with_slug = reverse('slug-law-detail', args=[self.law.slug, self.law.pk ])
         response = self.client.get(url_with_slug)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
