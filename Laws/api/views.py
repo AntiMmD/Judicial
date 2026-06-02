@@ -1,14 +1,56 @@
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
 from rest_framework.views import APIView
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
-from Laws.api.serializers import LawSerializer, ArticleSerializer
+from Laws.api.serializers import LawListSerializer, LawSerializer, ArticleSerializer
 from Laws.models import Law
+from Laws.api.pagination import LawListPagination
 
+class LawsListView(generics.ListAPIView):
+    queryset = Law.objects.filter(type=Law.LegalType.law).order_by("-priority")
+    serializer_class = LawListSerializer
+    pagination_class = LawListPagination
+
+class ArticlesListView(generics.ListAPIView):
+    queryset = Law.objects.filter(type=Law.LegalType.article).order_by("-priority")
+    serializer_class = LawListSerializer
+    pagination_class = LawListPagination
+
+class CategoriesListView(APIView):
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=list[str],
+                examples=[
+                    OpenApiExample(
+                        "Categories list",
+                        value=[
+                            "Law",
+                            "Agreement",
+                            "Approval",
+                            "Bylaw",
+                            "Charter",
+                            "Circular",
+                            "Convention",
+                            "Instruction",
+                            "Procedure",
+                            "Regulation",
+                            "Statutes",
+                        ],
+                    )
+                ],
+            )
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        return Response(Law.Category.values,status=status.HTTP_200_OK)
+
+    
 # Law here means type="Law"
-class GetLaw(APIView):
+class GetLawView(APIView):
     @extend_schema(
         responses={
             200: LawSerializer,
@@ -36,9 +78,8 @@ class GetLaw(APIView):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    
 
-class GetArticle(APIView):
+class GetArticleView(APIView):
     @extend_schema(
         responses={
             200: ArticleSerializer,

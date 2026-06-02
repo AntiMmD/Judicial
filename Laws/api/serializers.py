@@ -3,6 +3,19 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from Laws.models import Law
 
+class LawListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Law
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "priority",
+            "short_summary",
+            "category",
+        ]
+
+
 class LawChildSerializer(serializers.ModelSerializer):
     class Meta:
         model = Law
@@ -53,10 +66,6 @@ class LawSerializer(serializers.ModelSerializer):
         children = Law.objects.filter(parent=obj).order_by('article_no', 'type', 'note_no')
         return LawChildSerializer(children, many=True).data
     
-
-
-
-
 
 class ArticleSerializer(serializers.ModelSerializer):
     notes = serializers.SerializerMethodField()
