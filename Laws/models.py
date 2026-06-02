@@ -151,7 +151,7 @@ class Law(models.Model):
     def save(self, *args, **kwargs):
         # auto-generate slug if missing
         if not self.slug:
-            title_slug = slugify(self.title[:50] or "", allow_unicode=True).strip("-")
+            title_slug = slugify(self.title[:120] or "", allow_unicode=True).strip("-")
             suffix = self.id
             if title_slug:
                 self.slug = f"{title_slug}"

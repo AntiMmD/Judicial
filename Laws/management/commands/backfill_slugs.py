@@ -7,7 +7,7 @@ from Laws.models import Law
 
 
 def build_slug(obj):
-    title = (obj.title or "")[:50]
+    title = (obj.title or "")[:120]
     title_slug = slugify(title, allow_unicode=True).strip("-")
 
     if title_slug:
