@@ -1,0 +1,314 @@
+{% extends 'docs/base.html' %}
+{% load static %}
+
+{% block title %}Search API - GoooyaMelk API Documentation{% endblock %}
+
+{% block content %}
+
+<div class="my-5">
+  <h1 class="h3">Search API</h1>
+  <p>مستندات API جستجو و فیلتر در قوانین، مواد و تبصره‌ها</p>
+  <hr class="my-5" />
+</div>
+
+<h5 id="overview" class="pt-5">معرفی</h5>
+<p>
+  این API برای <strong>جستجوی متنی</strong> در مدل <code>Law</code> استفاده می‌شود.
+  جستجو روی قوانین (<code>Law</code>)، مواد (<code>Article</code>) و تبصره‌ها (<code>Note</code>) انجام می‌شود.
+</p>
+
+<p>
+  تمام endpointهای این اپ با پیشوند
+  <code>/search/</code>
+  در دسترس هستند.
+</p>
+
+<div class="alert alert-info">
+  <strong>فلوی پیشنهادی فرانت:</strong>
+  <ol class="mb-0 mt-2">
+    <li>کاربر عبارت را جستجو می‌کند → بدون پارامتر <code>type</code> همه انواع نمایش داده می‌شوند.</li>
+    <li>کاربر یک تب (مثلاً ماده) را انتخاب می‌کند → همان عبارت با <code>type=Article</code> ارسال می‌شود.</li>
+    <li>فیلد <code>facets</code> همیشه تعداد نتایج هر نوع را نشان می‌دهد تا کاربر بین تب‌ها جابه‌جا شود.</li>
+  </ol>
+</div>
+
+<h5 id="endpoints" class="pt-5">لیست Endpointها</h5>
+
+<ul>
+  <li><a href="#law-search">GET /search/</a> - جستجو در قوانین، مواد و تبصره‌ها</li>
+</ul>
+
+<hr class="my-5" />
+
+<h5 id="law-search" class="pt-5">1. جستجو</h5>
+
+<p>
+  جستجوی متنی در فیلدهای عنوان، خلاصه‌ها، متن اصلی، کد و مرجع تصویب.
+  نتایج بر اساس <strong>relevance</strong> (مرتبط‌بودن)، اولویت و بازدید مرتب می‌شوند.
+</p>
+
+<div class="alert alert-info">
+  <strong>دسترسی:</strong> عمومی (بدون نیاز به احراز هویت)
+</div>
+
+<h6>Endpoint</h6>
+
+<pre><code class="language-http">
+GET /search/
+</code></pre>
+
+<h6>Query Parameters</h6>
+
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>پارامتر</th>
+        <th>نوع</th>
+        <th>اجباری</th>
+        <th>توضیح</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>q</code></td>
+        <td>string</td>
+        <td>خیر</td>
+        <td>عبارت جستجو. در صورت خالی بودن، نتایج بر اساس اولویت مرتب می‌شوند.</td>
+      </tr>
+      <tr>
+        <td><code>type</code></td>
+        <td>string</td>
+        <td>خیر</td>
+        <td>فیلتر نوع: <code>Law</code>، <code>Article</code> یا <code>Note</code></td>
+      </tr>
+      <tr>
+        <td><code>category</code></td>
+        <td>string</td>
+        <td>خیر</td>
+        <td>فیلتر دسته‌بندی قانون (مثلاً <code>Regulation</code>، <code>Bylaw</code>)</td>
+      </tr>
+      <tr>
+        <td><code>page</code></td>
+        <td>integer</td>
+        <td>خیر</td>
+        <td>شماره صفحه (پیش‌فرض: 1)</td>
+      </tr>
+      <tr>
+        <td><code>page_size</code></td>
+        <td>integer</td>
+        <td>خیر</td>
+        <td>تعداد نتایج در هر صفحه (پیش‌فرض: 20، حداکثر: 50)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h6>مقادیر مجاز type</h6>
+
+<ul>
+  <li><code>Law</code> — قانون</li>
+  <li><code>Article</code> — ماده</li>
+  <li><code>Note</code> — تبصره</li>
+</ul>
+
+<h6>مقادیر مجاز category</h6>
+
+<ul>
+  <li><code>Law</code></li>
+  <li><code>Agreement</code></li>
+  <li><code>Approval</code></li>
+  <li><code>Bylaw</code></li>
+  <li><code>Charter</code></li>
+  <li><code>Circular</code></li>
+  <li><code>Convention</code></li>
+  <li><code>Instruction</code></li>
+  <li><code>Procedure</code></li>
+  <li><code>Regulation</code></li>
+  <li><code>Statutes</code></li>
+</ul>
+
+<h6>نمونه درخواست — جستجوی کلی</h6>
+
+<pre><code class="language-http">
+GET /search/?q=قانون+مدنی
+</code></pre>
+
+<h6>نمونه درخواست — فیلتر روی مواد</h6>
+
+<pre><code class="language-http">
+GET /search/?q=قانون+مدنی&type=Article
+</code></pre>
+
+<h6>نمونه درخواست — فیلتر دسته‌بندی</h6>
+
+<pre><code class="language-http">
+GET /search/?q=قانون&type=Law&category=Regulation&page=1&page_size=20
+</code></pre>
+
+<h6>نمونه پاسخ</h6>
+
+<pre><code class="language-json">
+{
+  "query": "قانون مدنی",
+  "type_filter": null,
+  "category_filter": null,
+  "facets": {
+    "Law": 3,
+    "Article": 12,
+    "Note": 5
+  },
+  "count": 20,
+  "next": "http://localhost:7070/search/?q=قانون+مدنی&page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": "674a1b2c3d4e5f6789012345",
+      "slug": "قانون-مدنی",
+      "type": "Law",
+      "title": "قانون مدنی",
+      "short_summary": "خلاصه قانون مدنی",
+      "summary": null,
+      "code": null,
+      "article_no": null,
+      "note_no": null,
+      "priority": 10,
+      "category": "Law",
+      "parent": null,
+      "parent_title": null,
+      "relevance": 16
+    },
+    {
+      "id": "674a1b2c3d4e5f6789012346",
+      "slug": "ماده-۱۰-قانون-مدنی",
+      "type": "Article",
+      "title": "ماده ۱۰ قانون مدنی",
+      "short_summary": null,
+      "summary": null,
+      "code": "10",
+      "article_no": 10,
+      "note_no": null,
+      "priority": 5,
+      "category": null,
+      "parent": "674a1b2c3d4e5f6789012345",
+      "parent_title": "قانون مدنی",
+      "relevance": 10
+    }
+  ]
+}
+</code></pre>
+
+<h6>توضیح فیلدهای پاسخ</h6>
+
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>فیلد</th>
+        <th>توضیح</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>query</code></td>
+        <td>عبارت جستجوی ارسال‌شده</td>
+      </tr>
+      <tr>
+        <td><code>type_filter</code></td>
+        <td>نوع فیلترشده (یا <code>null</code> اگر همه انواع)</td>
+      </tr>
+      <tr>
+        <td><code>category_filter</code></td>
+        <td>دسته‌بندی فیلترشده (یا <code>null</code>)</td>
+      </tr>
+      <tr>
+        <td><code>facets</code></td>
+        <td>تعداد نتایج هر نوع برای همان <code>q</code> (بدون توجه به <code>type</code>)</td>
+      </tr>
+      <tr>
+        <td><code>relevance</code></td>
+        <td>امتیاز مرتبط‌بودن — تطابق در عنوان بالاترین امتیاز را دارد</td>
+      </tr>
+      <tr>
+        <td><code>parent_title</code></td>
+        <td>عنوان قانون والد (برای ماده و تبصره)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h6>خطاهای رایج</h6>
+
+<pre><code class="language-json">
+{
+  "detail": "نوع نامعتبر. مقادیر مجاز: Article, Law, Note"
+}
+</code></pre>
+
+<pre><code class="language-json">
+{
+  "detail": "دسته‌بندی نامعتبر. مقادیر مجاز: Agreement, Approval, Bylaw, ..."
+}
+</code></pre>
+
+<hr />
+
+<h5 id="relevance" class="pt-5">2. امتیازدهی (Relevance)</h5>
+
+<p>جستجو در فیلدهای زیر انجام می‌شود و به هر کدام وزن متفاوتی داده شده است:</p>
+
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>فیلد</th>
+        <th>وزن</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>title</code></td><td>10</td></tr>
+      <tr><td><code>short_summary</code></td><td>6</td></tr>
+      <tr><td><code>code</code></td><td>5</td></tr>
+      <tr><td><code>summary</code></td><td>4</td></tr>
+      <tr><td><code>approving_authority</code></td><td>3</td></tr>
+      <tr><td><code>main_content</code></td><td>2</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr />
+
+<h5 id="permissions" class="pt-5">3. دسترسی‌ها</h5>
+
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Endpoint</th>
+        <th>Permission</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>GET /search/</td>
+        <td>عمومی (AllowAny)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h5 id="url-map" class="pt-5">4. ساختار آدرس‌ها</h5>
+
+<p>در فایل اصلی پروژه:</p>
+
+<pre><code class="language-python">
+path('search/', include('search.urls'))
+</code></pre>
+
+<p>
+  بنابراین endpoint جستجو با پیشوند
+  <code>/search/</code>
+  در دسترس است.
+</p>
+
+{% endblock %}

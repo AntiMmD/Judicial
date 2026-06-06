@@ -12,5 +12,6 @@ urlpatterns = [
     path('jobs/', include('job.urls')),
     path('quiz/', include('quiz.urls')),
     path('laws/', include('Laws.urls')),
+    path('search/', include('search.urls')),
 ]
 

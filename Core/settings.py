@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'quiz.apps.QuizConfig',
     'Documents.apps.DocumentsConfig',
     'Laws',
+    'search.apps.SearchConfig',
 
     # extentions
     'drf_spectacular',

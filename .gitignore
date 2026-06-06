@@ -12,3 +12,4 @@ AgahiHa
 **/sample_files/
 .wsl-venv/
 ShahrGpt/ShahrGpt.zip
+.env
