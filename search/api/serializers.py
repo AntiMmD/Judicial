@@ -4,8 +4,10 @@ from Laws.models import Law
 
 
 class SearchResultSerializer(serializers.ModelSerializer):
-    parent_title = serializers.SerializerMethodField()
-    relevance = serializers.IntegerField(read_only=True)
+    # parent_title = serializers.SerializerMethodField()
+    # relevance = serializers.IntegerField(read_only=True)
+    
+    brief_main_content = serializers.SerializerMethodField()
 
     class Meta:
         model = Law
@@ -14,36 +16,43 @@ class SearchResultSerializer(serializers.ModelSerializer):
             "slug",
             "type",
             "title",
-            "short_summary",
-            "summary",
-            "code",
+            # "short_summary",
+            # "summary",
+            "brief_main_content",
             "article_no",
             "note_no",
             "priority",
             "category",
-            "parent",
-            "parent_title",
-            "relevance",
+            # "parent",
+            # "parent_title",
+            # "relevance",
         ]
 
-    def get_parent_title(self, obj) -> str | None:
-        parent = obj.parent
-        if parent is None:
-            return None
-        return parent.title
+    # def get_parent_title(self, obj) -> str | None:
+    #     parent = obj.parent
+    #     if parent is None:
+    #         return None
+    #     return parent.title
+
+    def get_brief_main_content(self, obj):
+        highlighted = getattr(obj, "highlighted_content", None)
+        if highlighted:
+            return highlighted
+        return (obj.main_content or "")[:300]
 
 
-class SearchFacetsSerializer(serializers.Serializer):
-    Law = serializers.IntegerField(required=False, default=0)
-    Article = serializers.IntegerField(required=False, default=0)
-    Note = serializers.IntegerField(required=False, default=0)
+
+# class SearchFacetsSerializer(serializers.Serializer):
+#     Law = serializers.IntegerField(required=False, default=0)
+#     Article = serializers.IntegerField(required=False, default=0)
+#     Note = serializers.IntegerField(required=False, default=0)
 
 
 class SearchResponseSerializer(serializers.Serializer):
     query = serializers.CharField(allow_blank=True)
     type_filter = serializers.CharField(allow_null=True)
     category_filter = serializers.CharField(allow_null=True)
-    facets = SearchFacetsSerializer()
+    # facets = SearchFacetsSerializer()
     count = serializers.IntegerField()
     next = serializers.CharField(allow_null=True)
     previous = serializers.CharField(allow_null=True)

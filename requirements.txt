@@ -12,4 +12,4 @@ jdatetime
 coverage
 django-cors-headers
 django-nested-admin
-bson
+pymongo

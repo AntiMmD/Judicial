@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
 
 from bson import ObjectId
 
@@ -131,6 +133,14 @@ class Law(models.Model):
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True) 
 
+    # pstgres search related fields
+    search_vector = SearchVectorField(null=True)
+
+    class Meta:
+        indexes = [
+            GinIndex(fields=["search_vector"]),
+        ]
+
     def clean(self):
         super().clean()
         if self.type == self.LegalType.law and self.code:
@@ -152,7 +162,6 @@ class Law(models.Model):
         # auto-generate slug if missing
         if not self.slug:
             title_slug = slugify(self.title[:120] or "", allow_unicode=True).strip("-")
-            suffix = self.id
             if title_slug:
                 self.slug = f"{title_slug}"
             else:
@@ -161,6 +170,13 @@ class Law(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+        from django.contrib.postgres.search import SearchVector
+        Law.objects.filter(id=self.id).update(
+            search_vector=(
+                SearchVector("title") +
+                SearchVector("main_content")
+            )
+        )
 
 
 class LawRelationship(models.Model):
