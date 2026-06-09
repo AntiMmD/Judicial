@@ -125,7 +125,14 @@ class Law(models.Model):
     unification_rulings_sc_json = models.JSONField(null=True, blank=True)
     case_laws_and_decisions_json = models.JSONField(null=True, blank=True)
 
-    # WTF ARE THESE FIELDS:
+    breadcrumbs = models.ManyToManyField(
+        'Breadcrumb',
+        related_name='laws',
+        blank=True,
+        null= True
+    )
+
+    # i keep these for now to see if my assumptions about breadcrumbs field is right
     breadcrumb_json=models.JSONField(null=True, blank=True)
     breadcrumbIds_json = models.JSONField(null=True, blank=True)
 
@@ -196,4 +203,21 @@ class LawRelationship(models.Model):
     class Meta:
         unique_together = ('from_law', 'to_law', 'relation_type')
 
+    
+
+class Breadcrumb(models.Model):
+    id = models.CharField(
+        primary_key=True,
+        max_length=100,
+        unique=True,
+        db_index=True,
+        default=generate_objectid,)
+    
+    title = models.CharField(max_length=255)
+    
+    created_at = models.DateTimeField(auto_now_add=True) 
+    updated_at = models.DateTimeField(auto_now=True) 
+    
+    def __str__(self):
+        return self.title
     
