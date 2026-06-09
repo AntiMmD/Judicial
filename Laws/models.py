@@ -141,7 +141,7 @@ class Law(models.Model):
     updated_at = models.DateTimeField(auto_now=True) 
 
     # pstgres search related fields
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, blank=True)
 
     class Meta:
         indexes = [

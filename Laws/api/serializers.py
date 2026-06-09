@@ -6,10 +6,12 @@ from Laws.models import Law
 class LawListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Law
-        fields = ["id", "slug", "title", "priority", "short_summary", "category"]
+        fields = ["id", "slug", "type", "title", "priority", "short_summary", "category"]
 
 
 class LawChildSerializer(serializers.ModelSerializer):
+    breadcrumbs_titles= serializers.SerializerMethodField()
+
     class Meta:
         model = Law
         fields = [
@@ -28,17 +30,31 @@ class LawChildSerializer(serializers.ModelSerializer):
             "category",
             "article_count",
             "notes_count",
+            "breadcrumbs_titles",
         ]
+
+    def get_breadcrumbs_titles(self, obj):
+        return list(
+            obj.breadcrumbs.values_list("title", flat=True)
+        )
+
+class BreadcrumbGroupSerializer(serializers.Serializer):
+    breadcrumbs_title = serializers.ListField(
+        child=serializers.CharField()
+    )
+    items = LawChildSerializer(many=True)
 
 
 class PaginatedLawChildrenSerializer(serializers.Serializer):
     count = serializers.IntegerField()
     next = serializers.CharField(allow_null=True)
     previous = serializers.CharField(allow_null=True)
-    results = LawChildSerializer(many=True)
+    results = BreadcrumbGroupSerializer(many=True)
 
 
 class LawDetailSerializer(serializers.ModelSerializer):
+    breadcrumbs_titles= serializers.SerializerMethodField()
+
     class Meta:
         model = Law
         fields = [
@@ -56,7 +72,13 @@ class LawDetailSerializer(serializers.ModelSerializer):
             "date",
             "priority",
             "category",
+            "breadcrumbs_titles",
         ]
+
+    def get_breadcrumbs_titles(self, obj):
+        return list(
+            obj.breadcrumbs.values_list("title", flat=True)
+        )
 
 
 # Documentation-only (view attaches real value)
@@ -72,6 +94,8 @@ class LawDetailWithChildrenSerializer(LawDetailSerializer):
 
 
 class ArticleDetailSerializer(serializers.ModelSerializer):
+    breadcrumbs_titles= serializers.SerializerMethodField()
+
     class Meta:
         model = Law
         fields = [
@@ -88,7 +112,13 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
             "priority",
             "category",
             "parent",
+            "breadcrumbs_titles",
         ]
+
+    def get_breadcrumbs_titles(self, obj):
+        return list(
+            obj.breadcrumbs.values_list("title", flat=True)
+        )
 
 # Documentation-only (view attaches real value)
 class ArticleDetailWithNotesSerializer(ArticleDetailSerializer):

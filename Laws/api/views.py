@@ -21,7 +21,7 @@ from Laws.api.serializers import (
 from Laws.models import Law
 from Laws.api.pagination import LawListPagination, LawChildrenPagination
 
-
+from collections import defaultdict
 
 class LawsListView(generics.ListAPIView):
     queryset = Law.objects.filter(type=Law.LegalType.law).order_by("-priority")
@@ -60,6 +60,34 @@ class CategoriesListView(APIView):
     
 # Law here means type="Law"
 class GetLawView(APIView):
+    def _build_children_response(self, request, parent_obj, children_qs, parent_serializer):
+        paginator = LawChildrenPagination()
+        paginated_children = paginator.paginate_queryset(children_qs, request, view=self)
+
+        parent_data = parent_serializer(parent_obj).data
+        children_data = LawChildSerializer(paginated_children, many=True).data
+
+        grouped = defaultdict(list)
+
+        for item in children_data:
+            key = tuple(item.get("breadcrumbs_titles") or [])
+            item.pop("breadcrumbs_titles", None)
+            grouped[key].append(item)
+
+        grouped_results = [
+            {
+                "breadcrumbs_title": list(key),
+                "items": items,
+            }
+            for key, items in grouped.items()
+        ]
+
+        paginated = paginator.get_paginated_response(grouped_results)
+        parent_data["children"] = paginated.data
+
+        return Response(parent_data, status=status.HTTP_200_OK)
+
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -79,7 +107,6 @@ class GetLawView(APIView):
         ],
         responses={
             200: LawDetailWithChildrenSerializer ,
-            400: OpenApiResponse(description="Object exists but is not of type Law."),
             404: OpenApiResponse(description="Law not found."),
         },
         description="Fetches a Law by ID, including all its related Articles and Notes as children."
@@ -89,38 +116,38 @@ class GetLawView(APIView):
         try:
             law = Law.objects.get(pk=pk)
         except Law.DoesNotExist:
-            return Response(
-                {"detail": "قانون یافت نشد."},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"detail": "قانون یافت نشد."}, status=status.HTTP_404_NOT_FOUND)
 
         if law.type == Law.LegalType.law:
-            children_qs = Law.objects.filter(parent=law).order_by("article_no", "type", "note_no")
+            children_qs = (
+                Law.objects
+                .filter(parent=law)
+                .prefetch_related("breadcrumbs")
+                .order_by("article_no", "type", "note_no")
+            )
 
-            paginator = LawChildrenPagination()
-            paginated_children = paginator.paginate_queryset(children_qs, request, view=self)
-
-            law_data = LawDetailSerializer(law).data
-            law_data["children"] = paginator.get_paginated_response(
-                LawChildSerializer (paginated_children, many=True).data
-            ).data
-
-            return Response(law_data, status=status.HTTP_200_OK)
+            return self._build_children_response(
+                request,
+                law,
+                children_qs,
+                LawDetailSerializer
+            )
 
         elif law.type == Law.LegalType.article:
-            notes_qs = Law.objects.filter(
-                parent=law.parent,
-                type=Law.LegalType.note,
-                article_no=law.article_no,
-            ).order_by("note_no")
+            notes_qs = (
+                Law.objects
+                .filter(
+                    parent=law.parent,
+                    type=Law.LegalType.note,
+                    article_no=law.article_no,
+                )
+                .prefetch_related("breadcrumbs")
+                .order_by("note_no")
+            )
 
-        paginator = LawChildrenPagination()
-        paginated_notes = paginator.paginate_queryset(notes_qs, request, view=self)
-
-        article_data = ArticleDetailSerializer(law).data
-        article_data["children"] = paginator.get_paginated_response(
-            LawChildSerializer(paginated_notes, many=True).data
-        ).data
-
-        return Response(article_data, status=status.HTTP_200_OK)
-    
+            return self._build_children_response(
+                request,
+                law,
+                notes_qs,
+                ArticleDetailSerializer
+            )

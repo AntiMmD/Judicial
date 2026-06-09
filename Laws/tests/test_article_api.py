@@ -57,23 +57,27 @@ class GetArticleTests(APITestCase):
         self.assertEqual(response.data['title'], "Main Article")
         
         # Check that notes exist
-        self.assertTrue(len(response.data['children']['results']) == 2)
+        self.assertTrue(len(response.data['children']['results'][0]['items']) == 2)
     
     def test_get_article_detail_ordering_is_correct(self):
         response = self.client.get(self.url)
 
-        self.assertEqual(response.data['children']['results'][0]['type'], "Note")
-        self.assertEqual(response.data['children']['results'][0]['article_no'], 1)
-        self.assertEqual(response.data['children']['results'][0]['note_no'], 1)
+        items = response.data['children']['results'][0]['items']
 
-        self.assertEqual(response.data['children']['results'][1]['type'], "Note")
-        self.assertEqual(response.data['children']['results'][1]['article_no'], 1)
-        self.assertEqual(response.data['children']['results'][1]['note_no'], 2)
-    
+        self.assertEqual(items[0]['type'], "Note")
+        self.assertEqual(items[0]['article_no'], 1)
+        self.assertEqual(items[0]['note_no'], 1)
+
+        self.assertEqual(items[1]['type'], "Note")
+        self.assertEqual(items[1]['article_no'], 1)
+        self.assertEqual(items[1]['note_no'], 2)
+        
 
     def test_notes_have_correct_detail(self):
         response = self.client.get(self.url)
 
-        self.assertIn('title', response.data['children']['results'][0])
-        self.assertIn('main_content', response.data['children']['results'][0])
-        self.assertIn('summary', response.data['children']['results'][0])
+        items = response.data['children']['results'][0]['items']
+
+        self.assertIn('title', items[1])
+        self.assertIn('main_content', items[1])
+        self.assertIn('summary', items[1])

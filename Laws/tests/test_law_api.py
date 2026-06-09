@@ -71,25 +71,32 @@ class GetLawTests(APITestCase):
     def test_get_law_detail_ordering_is_correct(self):
         response = self.client.get(self.url)
 
-        self.assertEqual(response.data['children']['results'][0]['type'], "Article")
-        self.assertEqual(response.data['children']['results'][0]['article_no'], 1)
+        groups = response.data['children']['results']
+        items = [item for g in groups for item in g['items']]
 
-        self.assertEqual(response.data['children']['results'][1]['type'], "Note")
-        self.assertEqual(response.data['children']['results'][1]['article_no'], 1)
-        self.assertEqual(response.data['children']['results'][1]['note_no'], 1)
+        self.assertEqual(items[0]['type'], "Article")
+        self.assertEqual(items[0]['article_no'], 1)
 
-        self.assertEqual(response.data['children']['results'][2]['type'], "Note")
-        self.assertEqual(response.data['children']['results'][2]['note_no'], 2)        
+        self.assertEqual(items[1]['type'], "Note")
+        self.assertEqual(items[1]['article_no'], 1)
+        self.assertEqual(items[1]['note_no'], 1)
 
-        self.assertEqual(response.data['children']['results'][3]['type'], "Article")
-        self.assertEqual(response.data['children']['results'][3]['article_no'], 2) 
+        self.assertEqual(items[2]['type'], "Note")
+        self.assertEqual(items[2]['note_no'], 2)
+
+        self.assertEqual(items[3]['type'], "Article")
+        self.assertEqual(items[3]['article_no'], 2)
+
 
     def test_children_has_correct_detail(self):
         response = self.client.get(self.url)
 
-        self.assertIn('title', response.data['children']['results'][0])
-        self.assertIn('main_content', response.data['children']['results'][0])
-        self.assertIn('summary', response.data['children']['results'][0])
+        groups = response.data['children']['results']
+        items = [item for g in groups for item in g['items']]
+
+        self.assertIn('title', items[0])
+        self.assertIn('main_content', items[0])
+        self.assertIn('summary', items[0])
 
     def test_get_law_with_slug_seo(self):
         """Test that the URL works with the SEO slug included."""
