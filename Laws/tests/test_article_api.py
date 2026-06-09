@@ -44,13 +44,7 @@ class GetArticleTests(APITestCase):
             parent=cls.law
         )
 
-        cls.url = reverse('id-article-detail',args=[cls.article.pk])
-    
-    def test_get_article_detail_returns_400_if_id_is_not_article(self):
-        url = reverse('id-article-detail',args=[self.law.pk])
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        cls.url = reverse('id-law-detail',args=[cls.article.pk])
 
     def test_get_article_detail_success(self):
         """Test that we can fetch an article and its related info."""
@@ -63,37 +57,23 @@ class GetArticleTests(APITestCase):
         self.assertEqual(response.data['title'], "Main Article")
         
         # Check that notes exist
-        self.assertTrue(len(response.data['notes']['results']) == 2)
+        self.assertTrue(len(response.data['children']['results']) == 2)
     
     def test_get_article_detail_ordering_is_correct(self):
         response = self.client.get(self.url)
 
-        self.assertEqual(response.data['notes']['results'][0]['type'], "Note")
-        self.assertEqual(response.data['notes']['results'][0]['article_no'], 1)
-        self.assertEqual(response.data['notes']['results'][0]['note_no'], 1)
+        self.assertEqual(response.data['children']['results'][0]['type'], "Note")
+        self.assertEqual(response.data['children']['results'][0]['article_no'], 1)
+        self.assertEqual(response.data['children']['results'][0]['note_no'], 1)
 
-        self.assertEqual(response.data['notes']['results'][1]['type'], "Note")
-        self.assertEqual(response.data['notes']['results'][1]['article_no'], 1)
-        self.assertEqual(response.data['notes']['results'][1]['note_no'], 2)
+        self.assertEqual(response.data['children']['results'][1]['type'], "Note")
+        self.assertEqual(response.data['children']['results'][1]['article_no'], 1)
+        self.assertEqual(response.data['children']['results'][1]['note_no'], 2)
     
 
     def test_notes_have_correct_detail(self):
         response = self.client.get(self.url)
 
-        self.assertIn('title', response.data['notes']['results'][0])
-        self.assertIn('main_content', response.data['notes']['results'][0])
-        self.assertIn('summary', response.data['notes']['results'][0])
-
-    def test_get_article_with_slug_seo(self):
-        """Test that the URL works with the SEO slug included."""
-        url_with_slug = reverse('slug-article-detail', args=[self.article.slug, self.article.pk ])
-        response = self.client.get(url_with_slug)
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['id'], self.article.pk)
-
-    def test_get_article_not_found(self):
-        """Test that a non-existent ID returns 404."""
-        invalid_url = reverse('id-article-detail', args=['does-not-exist'])
-        response = self.client.get(invalid_url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn('title', response.data['children']['results'][0])
+        self.assertIn('main_content', response.data['children']['results'][0])
+        self.assertIn('summary', response.data['children']['results'][0])

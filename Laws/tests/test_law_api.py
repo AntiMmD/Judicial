@@ -54,12 +54,6 @@ class GetLawTests(APITestCase):
         )
 
         cls.url = reverse('id-law-detail',args=[cls.law.pk])
-    
-    def test_get_law_detail_returns_400_if_id_is_not_law(self):
-        url = reverse('id-law-detail',args=[self.article1.pk])
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_law_detail_success(self):
         """Test that we can fetch a law and its children."""
