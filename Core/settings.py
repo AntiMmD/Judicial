@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'Documents.apps.DocumentsConfig',
     'Laws',
     'search.apps.SearchConfig',
-
+    'Advisory_Opinions',
     # extentions
     'drf_spectacular',
     'drf_spectacular_sidecar',
