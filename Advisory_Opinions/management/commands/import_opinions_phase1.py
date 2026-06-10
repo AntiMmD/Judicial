@@ -65,24 +65,29 @@ class Command(BaseCommand):
 
                 for item in laws:
                     law_id = item.get("_id")
-                    relation_type = item.get("type")
-
-                    if not law_id or not relation_type:
-                        continue
-
-                    relation_type = str(relation_type).capitalize()
+                    relation_type = RelatedLaws.ValidRelations.law
 
                     law = Law.objects.filter(id=str(law_id)).first()
                     if not law:
                         continue
 
-                    RelatedLaws.objects.get_or_create(
+                    obj, created= RelatedLaws.objects.get_or_create(
                         from_opinion=opinion,
                         to_law=law,
                         relation_type=relation_type,
                     )
+                    if created:
+                        pass
 
 
             except Exception as e:
                 error_count += 1
                 self.stdout.write(self.style.ERROR(f"Error on doc {doc.get('_id')}: {e}"))
+                return
+
+        client.close()
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Import completed. Created: {created_count}, Errors: {error_count}"
+            )
+        )
