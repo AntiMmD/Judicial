@@ -119,11 +119,18 @@ class Law(models.Model):
     advisory_opinions_json = models.JSONField(null=True, blank=True)
     judicial_sessions_json = models.JSONField(null=True, blank=True)
     general_assembly_decisions_acj_json = models.JSONField(null=True, blank=True)
-    advisory_opinions_acj_json = models.JSONField(null=True, blank=True)
     unification_rulings_acj_json = models.JSONField(null=True, blank=True)
     specialized_boards_rulings_acj_json = models.JSONField(null=True, blank=True)
     unification_rulings_sc_json = models.JSONField(null=True, blank=True)
     case_laws_and_decisions_json = models.JSONField(null=True, blank=True)
+
+    """
+    Reverse relation from AdvisoryOpinion.related_laws is now added.
+    Use `law.related_opinions.all()` to access opinions related to this law.
+    advisory_opinions_acj_json only stays here to see if my assumptions are correct.
+    """
+    advisory_opinions_acj_json = models.JSONField(null=True, blank=True)
+
 
     breadcrumbs = models.ManyToManyField(
         'Breadcrumb',
