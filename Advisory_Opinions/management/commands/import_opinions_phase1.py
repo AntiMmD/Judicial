@@ -65,7 +65,7 @@ class Command(BaseCommand):
 
                 for item in laws:
                     law_id = item.get("_id")
-                    relation_type = RelatedLaws.ValidRelations.law
+                    relation_reason = RelatedLaws.ValidRelations.law
 
                     law = Law.objects.filter(id=str(law_id)).first()
                     if not law:
@@ -74,11 +74,28 @@ class Command(BaseCommand):
                     obj, created= RelatedLaws.objects.get_or_create(
                         from_opinion=opinion,
                         to_law=law,
-                        relation_type=relation_type,
+                        relation_reason=relation_reason,
                     )
                     if created:
                         pass
 
+                articles = doc.get("relatedArticles") or []
+
+                for item in articles:
+                    law_id = item.get("_id")
+                    relation_reason = RelatedLaws.ValidRelations.article
+
+                    article = Law.objects.filter(id=str(law_id)).first()
+                    if not article or article.type != Law.LegalType.article:
+                        print(article.type)
+
+                    obj, created= RelatedLaws.objects.get_or_create(
+                        from_opinion=opinion,
+                        to_law=article,
+                        relation_reason=relation_reason,
+                    )
+                    if created:
+                        pass    
 
             except Exception as e:
                 error_count += 1
