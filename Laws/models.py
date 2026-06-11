@@ -199,16 +199,18 @@ class LawRelationship(models.Model):
     # Who is being pointed to?
     to_law = models.ForeignKey(Law, on_delete=models.CASCADE, related_name='incoming_rel')
     
-    relation_type = models.CharField(max_length=50)
+    # if relation_reason = law or article, then it's the related law of the from_law
+    relation_reason = models.CharField(max_length=50, blank=True, null=True)
+    title = models.CharField(max_length=300, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True) 
     
     def __str__(self):
-        return f"{self.from_law_id} --({self.relation_type})--> {self.to_law_id}"
+        return f"{self.from_law_id} --({self.relation_reason})--> {self.to_law_id}"
     
     class Meta:
-        unique_together = ('from_law', 'to_law', 'relation_type')
+        unique_together = ('from_law', 'to_law', 'relation_reason')
 
     
 
