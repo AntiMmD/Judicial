@@ -12,6 +12,7 @@ urlpatterns = [
     path('quiz/', include('quiz.urls')),
     path('laws/search/', include('search.urls')),
     path('laws/', include('Laws.urls')),
+    path('advisory_opinions/', include('Advisory_Opinions.urls')),
     path('', include('Documents.urls')),
 ]
 
