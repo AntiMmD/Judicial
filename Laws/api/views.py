@@ -60,6 +60,7 @@ class CategoriesListView(APIView):
     
 # Law here means type="Law"
 class GetLawView(APIView):
+
     def _build_children_response(self, request, parent_obj, children_qs, parent_serializer):
         paginator = LawChildrenPagination()
         paginated_children = paginator.paginate_queryset(children_qs, request, view=self)
@@ -67,20 +68,31 @@ class GetLawView(APIView):
         parent_data = parent_serializer(parent_obj).data
         children_data = LawChildSerializer(paginated_children, many=True).data
 
-        grouped = defaultdict(list)
+        grouped_results = []
+        current_key = None
+        current_items = []
 
         for item in children_data:
             key = tuple(item.get("breadcrumbs_titles") or [])
             item.pop("breadcrumbs_titles", None)
-            grouped[key].append(item)
 
-        grouped_results = [
-            {
-                "breadcrumbs_title": list(key),
-                "items": items,
-            }
-            for key, items in grouped.items()
-        ]
+            if key != current_key:
+                if current_items:
+                    grouped_results.append({
+                        "breadcrumbs_title": list(current_key),
+                        "items": current_items,
+                    })
+
+                current_key = key
+                current_items = []
+
+            current_items.append(item)
+
+        if current_items:
+            grouped_results.append({
+                "breadcrumbs_title": list(current_key),
+                "items": current_items,
+            })
 
         paginated = paginator.get_paginated_response(grouped_results)
         parent_data["children"] = paginated.data
@@ -106,12 +118,11 @@ class GetLawView(APIView):
             ),
         ],
         responses={
-            200: LawDetailWithChildrenSerializer ,
+            200: LawDetailWithChildrenSerializer,
             404: OpenApiResponse(description="Law not found."),
         },
         description="Fetches a Law by ID, including all its related Articles and Notes as children."
     )
-    # slug is only intended for SEO
     def get(self, request, pk, slug=None):
         try:
             law = Law.objects.get(pk=pk)
