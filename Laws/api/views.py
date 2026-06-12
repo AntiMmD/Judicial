@@ -28,7 +28,7 @@ class LawsListView(generics.ListAPIView):
     serializer_class = LawListSerializer
     pagination_class = LawListPagination
 
-class CategoriesListView(APIView):
+class LegalTypesListView(APIView):
     @extend_schema(
         responses={
             200: OpenApiResponse(
@@ -55,7 +55,7 @@ class CategoriesListView(APIView):
         }
     )
     def get(self, request, *args, **kwargs):
-        return Response(Law.Category.values,status=status.HTTP_200_OK)
+        return Response(Law.LegalType.values,status=status.HTTP_200_OK)
 
     
 # Law here means type="Law"
