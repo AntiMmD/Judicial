@@ -10,7 +10,7 @@ services:
       sh -c "python manage.py migrate &&
              python manage.py runserver 0.0.0.0:7070"
     environment:
-      SECRET_KEY: ${DJANGO_SECRET_KEY}
+      SECRET_KEY: 35jgrmnrgjj45904949iprjgj5n8s0l9u2z!@#$%^&*()_+
       DEBUG: true
       ALLOWED_HOSTS: "127.0.0.1"
       DB_ENGINE: django.db.backends.postgresql
@@ -25,6 +25,7 @@ services:
 
   postgres:
     image: postgres:17
+    # image: postgres:16 baraye mahan koskhol
     volumes:
       - dev-postgres-data:/var/lib/postgresql/data
     environment:
@@ -33,11 +34,13 @@ services:
       POSTGRES_PASSWORD: changeme
     ports:
       - '5430:5432'
+      # - '5432:5432' baraye mahan koskhol
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+      # - "6380:6379" baraye mahan koskhol
 
 volumes:
   dev-postgres-data:

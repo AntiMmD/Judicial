@@ -15,4 +15,3 @@ urlpatterns = [
     path('advisory_opinions/', include('Advisory_Opinions.urls')),
     path('', include('Documents.urls')),
 ]
-
