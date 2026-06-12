@@ -14,4 +14,3 @@ urlpatterns = [
     path('laws/', include('Laws.urls')),
     path('', include('Documents.urls')),
 ]
-

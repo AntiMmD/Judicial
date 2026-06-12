@@ -1,3 +1,4 @@
+import os
 import secrets
 import redis
 
@@ -13,8 +14,16 @@ redis_client = redis.Redis(
     host='redis',
     port=6379,
     db=0,
-    decode_responses=True
+    decode_responses=True,
 )
+
+# redis_client = redis.Redis(
+#     host=os.getenv("JUSTIC_REDIS_HOST", "127.0.0.1"),
+#     port=int(os.getenv("JUSTIC_REDIS_PORT", "6380")),
+#     db=0,
+#     decode_responses=True,
+# )
+
 
 def _check_rate_limit(phonenumber, limit=1, window=120):
     """

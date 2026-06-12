@@ -1,7 +1,7 @@
 .vscode
 /ViBlog
 db.sqlite3
-__pycache__
+**/__pycache__/
 src/static
 container.db.sqlite3
 .venv-wsl

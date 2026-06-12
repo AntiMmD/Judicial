@@ -1,15 +1,17 @@
 from django.urls import path
 
 from .api.views import (
+    QuizListCreateAPIView,
     StartQuizAPIView,
     AttemptStatusAPIView,
     GetQuestionAPIView,
     SubmitAnswerAPIView,
     FinishQuizAPIView,
-    QuizResultAPIView
+    QuizResultAPIView,
 )
 
 urlpatterns = [
+    path("", QuizListCreateAPIView.as_view(), name="quiz-list-create"),
     # Quiz start
     path("start/<int:quiz_id>/",StartQuizAPIView.as_view(),name="quiz-start"),
     # Get questions

@@ -10,8 +10,8 @@ EXPOSE 6000
 
 ARG PIP_INDEX_URL=https://pypi.org/simple
 RUN python -m venv /ViPy && \
-    /ViPy/bin/pip install -i https://mirror-pypi.runflare.com/simple --upgrade pip && \
-    /ViPy/bin/pip install -i https://mirror-pypi.runflare.com/simple -r /tmp/requirements.txt && \
+    /ViPy/bin/pip install  --upgrade pip && \
+    /ViPy/bin/pip install -r /tmp/requirements.txt && \
     rm -rf /tmp
     # /ViPy/bin/pip install --upgrade pip && \
     # /ViPy/bin/pip install -i ${PIP_INDEX_URL} -r /tmp/requirements.txt && \
