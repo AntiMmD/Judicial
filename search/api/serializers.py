@@ -35,7 +35,7 @@ class SearchResultSerializer(serializers.ModelSerializer):
             "article_no",
             "note_no",
             "priority",
-            "category",
+            "legal_type",
             # "parent",
             # "parent_title",
             # "relevance",
@@ -65,7 +65,7 @@ class SearchResultSerializer(serializers.ModelSerializer):
 class SearchResponseSerializer(serializers.Serializer):
     query = serializers.CharField(allow_blank=True)
     type_filter = serializers.CharField(allow_null=True)
-    category_filter = serializers.CharField(allow_null=True)
+    legal_type_filter = serializers.CharField(allow_null=True)
     # facets = SearchFacetsSerializer()
     count = serializers.IntegerField()
     next = serializers.CharField(allow_null=True)
