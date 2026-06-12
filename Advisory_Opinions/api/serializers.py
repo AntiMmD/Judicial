@@ -14,6 +14,8 @@ class AdvisoryOpinionListSeriailizer(serializers.ModelSerializer):
             'title',
             'summary',
             'base_content',
+            'court_type',
+            'category',
             'code',
         ]
     
@@ -36,6 +38,8 @@ class AdvisoryOpinionSeriailizer(serializers.ModelSerializer):
             'main_content',
             'summary',
             'code',
+            'court_type',
+            'category',
             'main_source',
             'date',
             'views',

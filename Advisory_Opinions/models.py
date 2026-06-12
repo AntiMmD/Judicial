@@ -27,8 +27,10 @@ class AdvisoryOpinion(models.Model):
     base_content= models.TextField(blank=True, null=True)
     main_content = models.TextField(blank=True, null=True)
     summary = models.TextField(blank=True, null=True)
+
+    court_type= models.CharField(max_length=50, blank=True, null=True)
+    category = models.CharField(max_length=20, null=True, blank=True)
     
-    # wtf does this field mean?
     code = models.CharField(max_length=700, blank=True, null=True)
 
     # --- Metadata ---
