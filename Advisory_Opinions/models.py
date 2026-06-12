@@ -23,6 +23,7 @@ class AdvisoryOpinion(models.Model):
     )
 
     # --- Textual Content ---
+    title= models.CharField(max_length=300, blank=True, null=True)
     base_content= models.TextField(blank=True, null=True)
     main_content = models.TextField(blank=True, null=True)
     summary = models.TextField(blank=True, null=True)

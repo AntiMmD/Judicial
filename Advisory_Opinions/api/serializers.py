@@ -11,6 +11,7 @@ class AdvisoryOpinionListSeriailizer(serializers.ModelSerializer):
         fields = [
             'id',
             'slug',
+            'title',
             'summary',
             'base_content',
             'code',
@@ -30,6 +31,7 @@ class AdvisoryOpinionSeriailizer(serializers.ModelSerializer):
         fields = [
             'id',
             'slug',
+            'title',
             'base_content',
             'main_content',
             'summary',

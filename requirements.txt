@@ -13,3 +13,5 @@ coverage
 django-cors-headers
 django-nested-admin
 pymongo
+pandas
+openpyxl
