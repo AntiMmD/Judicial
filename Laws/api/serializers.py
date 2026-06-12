@@ -6,7 +6,7 @@ from Laws.models import Law
 class LawListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Law
-        fields = ["id", "slug", "type", "title", "priority", "short_summary", "category"]
+        fields = ["id", "slug", "type", "title", "priority", "short_summary", "legal_type"]
 
 
 class LawChildSerializer(serializers.ModelSerializer):
@@ -27,7 +27,7 @@ class LawChildSerializer(serializers.ModelSerializer):
             "main_source",
             "date",
             "priority",
-            "category",
+            "legal_type",
             "article_count",
             "notes_count",
             "breadcrumbs_titles",
@@ -71,7 +71,7 @@ class LawDetailSerializer(serializers.ModelSerializer):
             "main_source",
             "date",
             "priority",
-            "category",
+            "legal_type",
             "breadcrumbs_titles",
         ]
 
@@ -110,7 +110,7 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
             "main_source",
             "date",
             "priority",
-            "category",
+            "legal_type",
             "parent",
             "breadcrumbs_titles",
         ]

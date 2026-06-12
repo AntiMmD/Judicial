@@ -3,6 +3,19 @@ from rest_framework import serializers
 from Laws.models import Law
 
 
+# def clean_highlight(text):
+#     import re
+
+#     if not text:
+#         return text
+
+#     text = text.replace("&nbsp;", " ")
+#     text = re.sub(r'[\r\n\t]+', ' ', text)
+#     text = re.sub(r'\s{2,}', ' ', text)
+#     text = re.sub(r'\s*(</?b>)\s*', r'\1', text)
+
+#     return text.strip()
+
 class SearchResultSerializer(serializers.ModelSerializer):
     # parent_title = serializers.SerializerMethodField()
     # relevance = serializers.IntegerField(read_only=True)
@@ -37,9 +50,10 @@ class SearchResultSerializer(serializers.ModelSerializer):
     def get_brief_main_content(self, obj):
         highlighted = getattr(obj, "highlighted_content", None)
         if highlighted:
+            # highlighted = clean_highlight(highlighted)
             return highlighted
         return (obj.main_content or "")[:300]
-
+    
 
 
 # class SearchFacetsSerializer(serializers.Serializer):

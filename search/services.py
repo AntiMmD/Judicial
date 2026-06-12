@@ -7,13 +7,13 @@ VALID_TYPES = {
     'Law',
     'Article',
 }
-VALID_CATEGORIES = {choice.value for choice in Law.Category}
+VALID_CATEGORIES = {choice.value for choice in Law.LegalType}
 
-def search_laws(query: str, *, type_filter: str | None = None, category_filter: str | None = None):
+def search_laws(query: str, *, type_filter: str | None = None, legal_type_filter: str | None = None):
     qs = Law.objects.all()
 
-    if category_filter:
-        qs = qs.filter(category=category_filter)
+    if legal_type_filter:
+        qs = qs.filter(legal_type=legal_type_filter)
 
     if query:
         search_query = SearchQuery(query, search_type="plain")
@@ -79,7 +79,7 @@ def search_laws(query: str, *, type_filter: str | None = None, category_filter: 
 # }
 
 # VALID_TYPES = {choice.value for choice in Law.LegalType}
-# VALID_CATEGORIES = {choice.value for choice in Law.Category}
+# VALID_CATEGORIES = {choice.value for choice in Law.legal_type}
 
 
 # def _build_text_filter(query: str) -> Q:
@@ -111,18 +111,18 @@ def search_laws(query: str, *, type_filter: str | None = None, category_filter: 
 #     query: str,
 #     *,
 #     type_filter: str | None = None,
-#     category_filter: str | None = None,
+#     legal_type_filter: str | None = None,
 # ):
 #     """
-#     Search Law records with optional type/category filters.
+#     Search Law records with optional type/legal_type filters.
 
 #     Returns (results_queryset, facets_dict) where facets show per-type counts
 #     for the current query (ignoring type_filter so the client can switch tabs).
 #     """
 #     qs = Law.objects.all()
 
-#     if category_filter:
-#         qs = qs.filter(category=category_filter)
+#     if legal_type_filter:
+#         qs = qs.filter(legal_type=legal_type_filter)
 
 #     if query:
 #         qs = qs.filter(_build_text_filter(query))

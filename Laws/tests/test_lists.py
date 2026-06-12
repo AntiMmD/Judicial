@@ -7,9 +7,9 @@ from Laws.models import Law
 class LawsListViewTests(TestCase):
 
     def setUp(self):
-        Law.objects.create(type=Law.LegalType.law, title="Law A", priority=2)
-        Law.objects.create(type=Law.LegalType.law, title="Law B", priority=5)
-        Law.objects.create(type=Law.LegalType.article, title="Article X", priority=10, code='1')
+        Law.objects.create(type=Law.Types.law, title="Law A", priority=2)
+        Law.objects.create(type=Law.Types.law, title="Law B", priority=5)
+        Law.objects.create(type=Law.Types.article, title="Article X", priority=10, code='1')
 
     def test_only_laws_returned(self):
         response = self.client.get(reverse("laws-list"))
@@ -22,10 +22,10 @@ class LawsListViewTests(TestCase):
             Law.objects.filter(id__in= returned_ids ).values_list("type", flat=True)
         )
 
-        self.assertTrue(all(type == Law.LegalType.law for type in returned_types))
+        self.assertTrue(all(type == Law.Types.law for type in returned_types))
 
         expected_ids = set(
-            Law.objects.filter(type=Law.LegalType.law).values_list("id", flat=True)
+            Law.objects.filter(type=Law.Types.law).values_list("id", flat=True)
         )
         self.assertEqual(returned_ids, expected_ids)
 

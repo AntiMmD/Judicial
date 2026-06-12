@@ -32,11 +32,11 @@ class Command(BaseCommand):
             mapping = {"law": "Law", "article": "Article", "note": "Note"}
             return mapping.get(str(t).lower(), None)
 
-        valid_categories = {choice[0] for choice in Law.Category.choices}
-        def clean_category(c):
+        valid_legal_types = {choice[0] for choice in Law.LegalType.choices}
+        def clean_legal_types(c):
             if not c: return None
             formatted = str(c).capitalize()
-            return formatted if formatted in valid_categories else None
+            return formatted if formatted in valid_legal_types else None
 
         def sanitize_json(data):
             if data is None:
@@ -69,7 +69,7 @@ class Command(BaseCommand):
                     # Technical
                     code=doc.get("code"),
                     priority=doc.get("priority"),
-                    category=clean_category(doc.get("category")),
+                    legal_type=clean_legal_types(doc.get("category")),
                     article_count=doc.get("articlesCount"),
                     notes_count=doc.get("notesCount"),
                     views=doc.get("views", 0),

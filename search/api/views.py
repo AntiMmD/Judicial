@@ -27,7 +27,7 @@ class LawSearchView(APIView):
                 description="فیلتر نوع: Law یا Article . در صورت عدم ارسال، همه انواع برگردانده می‌شوند.",
             ),
             OpenApiParameter(
-                name="category",
+                name="legal_type",
                 type=str,
                 location=OpenApiParameter.QUERY,
                 enum=list(VALID_CATEGORIES),
@@ -69,9 +69,9 @@ class LawSearchView(APIView):
     def get(self, request):
         query = request.query_params.get("q", "").strip() or None
         type_filter = request.query_params.get("type", "").strip() or None
-        category_filter = request.query_params.get("category", "").strip() or None
-        search_in_title:bool = request.query_params.get("category", "").strip() or None
-        search_in_content:bool = request.query_params.get("category", "").strip() or None
+        legal_type_filter = request.query_params.get("legal_type", "").strip() or None
+        search_in_title:bool = request.query_params.get("legal_type", "").strip() or None
+        search_in_content:bool = request.query_params.get("legal_type", "").strip() or None
         
         if type_filter and type_filter not in VALID_TYPES:
             return Response(
@@ -81,7 +81,7 @@ class LawSearchView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if category_filter and category_filter not in VALID_CATEGORIES:
+        if legal_type_filter and legal_type_filter not in VALID_CATEGORIES:
             return Response(
                 {
                     "detail": f"دسته‌بندی نامعتبر. مقادیر مجاز: {', '.join(sorted(VALID_CATEGORIES))}"
@@ -92,7 +92,7 @@ class LawSearchView(APIView):
         results_qs = search_laws(
             query,
             type_filter=type_filter,
-            category_filter=category_filter,
+            legal_type_filter=legal_type_filter,
             # search_in_title=search_in_title,
             # search_in_content=search_in_content
         )
@@ -105,7 +105,7 @@ class LawSearchView(APIView):
         payload = {
             "query": query,
             "type_filter": type_filter,
-            "category_filter": category_filter,
+            "legal_type_filter": legal_type_filter,
             "count": paginator.page.paginator.count,
             "next": paginator.get_next_link(),
             "previous": paginator.get_previous_link(),
@@ -138,7 +138,7 @@ class LawSearchView(APIView):
 #                 description="فیلتر نوع: Law، Article یا Note. در صورت عدم ارسال، همه انواع برگردانده می‌شوند.",
 #             ),
 #             OpenApiParameter(
-#                 name="category",
+#                 name="legal_type",
 #                 type=str,
 #                 location=OpenApiParameter.QUERY,
 #                 enum=list(VALID_CATEGORIES),
@@ -169,7 +169,7 @@ class LawSearchView(APIView):
 #     def get(self, request):
 #         query = request.query_params.get("q", "").strip()
 #         type_filter = request.query_params.get("type", "").strip() or None
-#         category_filter = request.query_params.get("category", "").strip() or None
+#         legal_type_filter = request.query_params.get("legal_type", "").strip() or None
 
 #         if type_filter and type_filter not in VALID_TYPES:
 #             return Response(
@@ -179,7 +179,7 @@ class LawSearchView(APIView):
 #                 status=status.HTTP_400_BAD_REQUEST,
 #             )
 
-#         if category_filter and category_filter not in VALID_CATEGORIES:
+#         if legal_type_filter and legal_type_filter not in VALID_CATEGORIES:
 #             return Response(
 #                 {
 #                     "detail": f"دسته‌بندی نامعتبر. مقادیر مجاز: {', '.join(sorted(VALID_CATEGORIES))}"
@@ -190,7 +190,7 @@ class LawSearchView(APIView):
 #         results_qs, facets = search_laws(
 #             query,
 #             type_filter=type_filter,
-#             category_filter=category_filter,
+#             legal_type_filter=legal_type_filter,
 #         )
 
 #         results_qs = results_qs.select_related("parent")
@@ -203,7 +203,7 @@ class LawSearchView(APIView):
 #         payload = {
 #             "query": query,
 #             "type_filter": type_filter,
-#             "category_filter": category_filter,
+#             "legal_type_filter": legal_type_filter,
 #             "facets": normalized_facets,
 #             "count": paginator.page.paginator.count,
 #             "next": paginator.get_next_link(),

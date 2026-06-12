@@ -11,7 +11,7 @@ def generate_objectid():
 
 
 class Law(models.Model):
-    class LegalType(models.TextChoices):
+    class Types(models.TextChoices):
         law = 'Law', 'قانون'
         article = 'Article', 'ماده'
         note = 'Note', 'تبصره'
@@ -36,7 +36,7 @@ class Law(models.Model):
         related_name='children'
     )
 
-    type = models.CharField(max_length=10, choices= LegalType.choices)
+    type = models.CharField(max_length=10, choices= Types.choices)
 
     # --- Textual Content ---
     title = models.TextField(blank=True, null=True)
@@ -63,7 +63,7 @@ class Law(models.Model):
     note_no = models.IntegerField(null=True, blank=True) # az fielde code be dast miad
     priority = models.IntegerField(blank=True, null=True)
 
-    class Category(models.TextChoices):
+    class LegalType(models.TextChoices):
         law = 'Law'
         agreement = 'Agreement'
         approval = 'Approval'
@@ -76,9 +76,9 @@ class Law(models.Model):
         regulation = 'Regulation'
         statutes = 'Statutes'
 
-    category = models.CharField(
+    legal_type = models.CharField(
         max_length=20,
-        choices= Category.choices,
+        choices= LegalType.choices,
         default=None,
         null=True,
         blank=True,
@@ -157,16 +157,16 @@ class Law(models.Model):
 
     def clean(self):
         super().clean()
-        if self.type == self.LegalType.law and self.code:
+        if self.type == self.Types.law and self.code:
             raise ValidationError("Laws cannot have a code field.")     
-        if self.type in [self.LegalType.article, self.LegalType.note] and not self.code:
+        if self.type in [self.Types.article, self.Types.note] and not self.code:
             raise ValidationError(f"{self.type} must have a code.")
         
-        if (self.type == self.LegalType.article or self.type == self.LegalType.note) and self.article_count is not None:
+        if (self.type == self.Types.article or self.type == self.Types.note) and self.article_count is not None:
             raise ValidationError(f"{self.type} cannot have an article_count field.")
 
         
-        if (self.type == self.LegalType.law or self.type == self.LegalType.note) and self.notes_count is not None:
+        if (self.type == self.Types.law or self.type == self.Types.note) and self.notes_count is not None:
             raise ValidationError(f"{self.type} cannot have a notes_count field.")
         
     def __str__(self):

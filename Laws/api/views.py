@@ -133,12 +133,12 @@ class GetLawView(APIView):
                 LawDetailSerializer
             )
 
-        elif law.type == Law.LegalType.article:
+        elif law.type == Law.Types.article:
             notes_qs = (
                 Law.objects
                 .filter(
                     parent=law.parent,
-                    type=Law.LegalType.note,
+                    type=Law.Types.note,
                     article_no=law.article_no,
                 )
                 .prefetch_related("breadcrumbs")
